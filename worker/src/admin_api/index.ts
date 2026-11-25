@@ -118,3 +118,27 @@ api.post('/admin/ip_blacklist/settings', ip_blacklist_settings.saveIpBlacklistSe
 // AI extract settings
 api.get('/admin/ai_extract/settings', ai_extract_settings.getAiExtractSettings)
 api.post('/admin/ai_extract/settings', ai_extract_settings.saveAiExtractSettings)
+// 提交/修改邮箱分组（group 传空或不传则重置为未分组）
+api.post('/admin/set_group', async (c) => {
+    const { address, group } = await c.req.json();
+    if (!address) return c.text("address is required", 400);
+    const groupName = group ? String(group).trim() : "";
+    const res = await c.env.DB.prepare(
+        `UPDATE address SET group_name = ? WHERE name = ?`
+    ).bind(groupName, address).run();
+    return c.json({
+        success: true,
+        address,
+        group: groupName,
+        changes: res.meta?.changes ?? 0
+    });
+});
+
+// 按分组查询邮箱列表（group 不传或传空则查询所有未分组邮箱）
+api.get('/admin/list_by_group', async (c) => {
+    const group = c.req.query("group") ?? "";
+    const { results } = await c.env.DB.prepare(
+        `SELECT id, name, group_name, created_at FROM address WHERE COALESCE(group_name, '') = ? ORDER BY id DESC`
+    ).bind(group).all();
+    return c.json({ group, count: results.length, results });
+});
