@@ -1,0 +1,16 @@
+name = "cloudflare-temp-email"
+main = "src/worker.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = [ "nodejs_compat" ]
+
+[vars]
+DOMAINS = ["tryknj.com", "sadds.shop", "retnj.live", "retnj.my"]
+JWT_SECRET = "v9K#mP4$xL8@wQ2!zR7&nT5*cB1^yH6(jF3_gD0+sA"
+ADMIN_PASSWORDS = ["Adm#2026!CloudMail$98xP"]
+ENABLE_USER_CREATE_EMAIL = false
+ENABLE_CHECK_JUNK_MAIL = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "temp-email-db"
+database_id = "5736e6eb-b58c-499f-940e-b739b2578d72"
